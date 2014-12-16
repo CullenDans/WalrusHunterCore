@@ -1,0 +1,28 @@
+## gradle
+/.gradle
+/build
+
+
+## ForgeGradle
+/run
+
+## eclipse
+/eclipse
+/.settings
+/.metadata
+/.classpath
+/.project
+/bin
+
+## Idea
+/out
+/.idea
+/*.iml
+/*.ipr
+/*.iws
+/atlassian-ide-plugin.xml
+
+## Mac
+/*.DS_Store
+
+/minecraft
