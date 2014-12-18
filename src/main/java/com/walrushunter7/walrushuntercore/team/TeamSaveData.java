@@ -1,19 +1,19 @@
 package com.walrushunter7.walrushuntercore.team;
 
-import com.walrushunter7.walrushuntercore.save.SaveData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.WorldSavedData;
 
 import java.util.Set;
 
-public class TeamSaveData extends SaveData {
+public class TeamSaveData extends WorldSavedData {
 
     public TeamSaveData(String fileName) {
-        this.fileName = fileName;
+        super(fileName);
     }
 
-    public void WriteToNBT(NBTTagCompound tagCompound) {
-        Set<Team> teams = TeamHandler.getTeams();
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        Set<Team> teams = TeamHandler.instance.getTeams();
         NBTTagList teamsList = new NBTTagList();
         for (Team team: teams) {
             NBTTagCompound teamTag = new NBTTagCompound();
@@ -25,15 +25,16 @@ public class TeamSaveData extends SaveData {
 
     }
 
-    public void ReadFromNBT(NBTTagCompound tagCompound) {
-        TeamHandler.clearExisting();
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        TeamHandler.instance.clearExisting();
+        TeamHandler.instance.teamSaveData = this;
         NBTTagList teamsList = tagCompound.getTagList("TeamsList", 10);
         for (int i = 0; teamsList.tagCount() > i; i++) {
             NBTTagCompound teamTag = teamsList.getCompoundTagAt(i);
             Team team = new Team(teamTag);
-            TeamHandler.addTeam(team);
+            TeamHandler.instance.addTeam(team);
         }
-        TeamHandler.setupPlayerTeamIds();
+        TeamHandler.instance.setupPlayerTeamIds();
 
     }
 

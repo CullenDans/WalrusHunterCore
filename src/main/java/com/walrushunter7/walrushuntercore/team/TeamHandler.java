@@ -7,31 +7,49 @@ import java.util.*;
 
 public class TeamHandler {
 
-    private static Map<String, Team> teams = new HashMap<String, Team>();
-    private static Map<GameProfile, String> playerTeamIds = new HashMap<GameProfile, String>();
+    private Map<String, Team> teams = new HashMap<String, Team>();
+    private Map<String, String> teamNameMap = new HashMap<String, String>();
+    private Map<GameProfile, String> playerTeamIds = new HashMap<GameProfile, String>();
+    public TeamSaveData teamSaveData;
 
-    public static Set<Team> getTeams() {
+    public static TeamHandler instance;
+
+    public Set<Team> getTeams() {
         Set<Team> teamsSet = new HashSet<Team>();
         teamsSet.addAll(teams.values());
         return teamsSet;
     }
 
-    public static TeamSaveData teamSaveData;
-
-    public static Team getTeamFromID(String teamID) {
-        if (teamID != null) {
-            if (teams.containsKey(teamID)) {
-                return teams.get(teamID);
+    public Team getTeam(String team) {
+        if (team != null) {
+            if (teams.containsKey(team)) {
+                return teams.get(team);
+            } else if (teamNameMap.containsKey(team)) {
+                return teams.get(teamNameMap.get(team));
             }
         }
         return null;
     }
 
-    public static Team getPlayerTeam(EntityPlayer player) {
+    public boolean teamExists(String teamId, String teamName) {
+        return teams.containsKey(teamId) || teamNameMap.containsKey(teamName);
+    }
+
+    public String teamIdFromName(String teamName) {
+        if (teamNameMap.containsKey(teamName)) {
+            return teamNameMap.get(teamName);
+        } else if (teams.containsKey(teamName)) {
+            return teamName;
+        } else {
+            return null;
+        }
+    }
+
+    public Team getPlayerTeam(EntityPlayer player) {
         return getPlayerTeam(player.getGameProfile());
     }
 
-    public static Team getPlayerTeam(GameProfile gameProfile) {
+    public Team getPlayerTeam(GameProfile gameProfile) {
         if (playerTeamIds.containsKey(gameProfile)) {
             String teamId = playerTeamIds.get(gameProfile);
             if (teams.containsKey(teamId)) {
@@ -41,42 +59,48 @@ public class TeamHandler {
         return null;
     }
 
-    public static void addPlayerToTeam(EntityPlayer player, String team) {
-        addPlayerToTeam(player.getGameProfile(), team);
+    public boolean addPlayerToTeam(EntityPlayer player, String team) {
+        return this.addPlayerToTeam(player.getGameProfile(), team);
     }
 
-    public static void addPlayerToTeam(GameProfile gameProfile, String team) {
-        if (playerTeamIds.containsKey(gameProfile)) {
-            String oldTeam = playerTeamIds.get(gameProfile);
-            playerTeamIds.remove(gameProfile);
-            teams.get(oldTeam).removePlayer(gameProfile);
-        }
-        playerTeamIds.put(gameProfile, team);
-        teams.get(team).addPlayer(gameProfile);
-        teamSaveData.markDirty();
-    }
-
-    public static void removePlayerFromTeam(EntityPlayer player, String team) {
-        removePlayerFromTeam(player.getGameProfile(), team);
-    }
-
-    public static void removePlayerFromTeam(GameProfile gameProfile, String team) {
-        if (playerTeamIds.containsKey(gameProfile)) {
-            if (playerTeamIds.get(gameProfile) == team) {
+    public boolean addPlayerToTeam(GameProfile gameProfile, String team) {
+        String teamId = this.teamIdFromName(team);
+        if (teamId != null) {
+            if (playerTeamIds.containsKey(gameProfile)) {
                 String oldTeam = playerTeamIds.get(gameProfile);
                 playerTeamIds.remove(gameProfile);
                 teams.get(oldTeam).removePlayer(gameProfile);
             }
+            playerTeamIds.put(gameProfile, teamId);
+            teams.get(teamId).addPlayer(gameProfile);
+            teamSaveData.markDirty();
+            return true;
+        } else {
+            return false;
         }
-        teamSaveData.markDirty();
     }
 
-    public static void clearExisting() {
+    public boolean removePlayerFromTeam(EntityPlayer player) {
+        return this.removePlayerFromTeam(player.getGameProfile());
+    }
+
+    public boolean removePlayerFromTeam(GameProfile gameProfile) {
+        if (playerTeamIds.containsKey(gameProfile)) {
+            String oldTeam = playerTeamIds.get(gameProfile);
+            playerTeamIds.remove(gameProfile);
+            teams.get(oldTeam).removePlayer(gameProfile);
+            teamSaveData.markDirty();
+            return true;
+        }
+        return false;
+    }
+
+    public void clearExisting() {
         teams.clear();
         playerTeamIds.clear();
     }
 
-    public static void setupPlayerTeamIds() {
+    public void setupPlayerTeamIds() {
         for (Team team: getTeams()) {
             for (GameProfile gameProfile: team.getPlayers()) {
                 playerTeamIds.put(gameProfile, team.getTeamId());
@@ -84,17 +108,21 @@ public class TeamHandler {
         }
     }
 
-    public static void addTeam(Team team) {
+    public void addTeam(Team team) {
         teams.put(team.getTeamId(), team);
+        teamNameMap.put(team.getTeamName(), team.getTeamId());
         teamSaveData.markDirty();
     }
 
-    public static void removeTeam(Team team) {
-        teams.remove(team.getTeamId());
-        for (GameProfile gameProfile: team.getPlayers()) {
-            playerTeamIds.remove(gameProfile);
+    public void removeTeam(Team team) {
+        if (team != null && teams.containsValue(team)) {
+            teams.remove(team.getTeamId());
+            teams.remove(team.getTeamName());
+            for (GameProfile gameProfile : team.getPlayers()) {
+                playerTeamIds.remove(gameProfile);
+            }
+            teamSaveData.markDirty();
         }
-        teamSaveData.markDirty();
     }
 
 }
