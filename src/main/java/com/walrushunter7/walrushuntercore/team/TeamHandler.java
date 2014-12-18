@@ -31,6 +31,10 @@ public class TeamHandler {
         return null;
     }
 
+    public Collection<String> getTeamNames() {
+        return teamNameMap.keySet();
+    }
+
     public boolean teamExists(String teamId, String teamName) {
         return teams.containsKey(teamId) || teamNameMap.containsKey(teamName);
     }

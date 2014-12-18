@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "WalrusHunterCore",
+  "name": "WalrusHunter Core",
+  "description": "A mod used along side most Walrus Hunter mods",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["WalrusHunter7"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

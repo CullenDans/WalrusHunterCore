@@ -1,0 +1,27 @@
+commands.teams.usage=/teams <add|remove|join|leave|list> ...
+commands.teams.add.usage=/teams add <name> [display name ...]
+commands.teams.list.usage=/teams list [name]
+commands.teams.remove.usage=/teams remove <name>
+commands.teams.join.usage=/teams join <team> [player]
+commands.teams.leave.usage=/teams leave [player]
+
+commands.teams.add.alreadyExists=A team with the name '%s' already exists
+commands.teams.add.tooLong=The name '%s' is too long for a team, it can be at most %d characters long
+commands.teams.add.displayTooLong=The display name '%s' is too long for a team, it can be at most %d characters long
+commands.teams.add.success=Added new team '%s' successfully
+
+commands.teams.list.count=Showing %d teams on the scoreboard:
+commands.teams.list.entry=- %1$s: '%2$s' has %3$d players
+commands.teams.list.empty=There are no teams registered on the scoreboard
+commands.teams.list.player.count=Showing %d player(s) in team %s:
+commands.teams.list.player.entry=- %2$s: %1$d (%3$s)
+commands.teams.list.player.empty=Team %s has no players
+
+commands.teams.remove.success=Removed team %s
+
+commands.teams.join.success=Added %d player(s) to team %s: %s
+commands.teams.join.failure=Could not add %d player(s) to team %s: %s
+
+commands.teams.leave.success=Removed %d player(s) from their teams: %s
+commands.teams.leave.failure=Could not remove %d player(s) from their teams: %s
+commands.teams.leave.noTeam=You are not in a team

@@ -13,6 +13,7 @@ import net.minecraft.util.EnumChatFormatting;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class TeamCommand extends CommandBase{
 
@@ -33,12 +34,12 @@ public class TeamCommand extends CommandBase{
 
     public void processCommand(ICommandSender iCommandSender, String[] args) {
 
-        if (args.length > 1) {
+        if (args.length > 0) {
 
             //teams create test [TeatTeam]
             if (args[0].equalsIgnoreCase("add")) {
                 if (args.length < 2) {
-                    throw new WrongUsageException("commands.scoreboard.teams.add.usage", 0);
+                    throw new WrongUsageException("commands.teams.add.usage", 0);
                 }
                 this.add(iCommandSender, args, 1);
             }
@@ -46,7 +47,7 @@ public class TeamCommand extends CommandBase{
             //teams remove test
             else if (args[0].equalsIgnoreCase("remove")) {
                 if (args.length < 2) {
-                    throw new WrongUsageException("commands.scoreboard.teams.remove.usage", 0);
+                    throw new WrongUsageException("commands.teams.remove.usage", 0);
                 }
                 this.remove(iCommandSender, args, 1);
             }
@@ -54,7 +55,7 @@ public class TeamCommand extends CommandBase{
             //teams join test [player]
             else if (args[0].equalsIgnoreCase("join")) {
                 if (args.length < 3 && (args.length != 2 || !(iCommandSender instanceof EntityPlayer))) {
-                    throw new WrongUsageException("commands.scoreboard.teams.join.usage", 0);
+                    throw new WrongUsageException("commands.teams.join.usage", 0);
                 }
                 this.join(iCommandSender, args, 1);
             }
@@ -62,22 +63,22 @@ public class TeamCommand extends CommandBase{
             //teams leave [player]
             else if (args[0].equalsIgnoreCase("leave")) {
                 if (args.length < 1 && !(iCommandSender instanceof EntityPlayer)) {
-                    throw new WrongUsageException("commands.scoreboard.teams.leave.usage", 0);
+                    throw new WrongUsageException("commands.teams.leave.usage", 0);
                 }
                 this.leave(iCommandSender, args, 1);
             }
 
             //team list
             else if (args[0].equalsIgnoreCase("list")) {
-                if (args.length < 1) {
-                    throw new WrongUsageException("commands.scoreboard.teams.list.usage", 0);
+                if (args.length > 2) {
+                    throw new WrongUsageException("commands.teams.list.usage", 0);
                 }
                 this.list(iCommandSender, args, 1);
             }
             return;
         }
 
-        throw new WrongUsageException("commands.scoreboard.teams.usage");
+        throw new WrongUsageException("commands.teams.usage");
 
     }
 
@@ -94,15 +95,15 @@ public class TeamCommand extends CommandBase{
 
         if (teamHandler.teamExists(teamId, teamName))
         {
-            throw new CommandException("commands.scoreboard.teams.add.alreadyExists", teamName);
+            throw new CommandException("commands.teams.add.alreadyExists", teamName);
         }
         else if (teamId.length() > 16)
         {
-            throw new SyntaxErrorException("commands.scoreboard.teams.add.tooLong", teamId, 16);
+            throw new SyntaxErrorException("commands.teams.add.tooLong", teamId, 16);
         }
         else if (teamId.length() == 0)
         {
-            throw new WrongUsageException("commands.scoreboard.teams.add.usage", 0);
+            throw new WrongUsageException("commands.teams.add.usage", 0);
         }
         else
         {
@@ -111,11 +112,11 @@ public class TeamCommand extends CommandBase{
 
                 if (teamName.length() > 32)
                 {
-                    throw new SyntaxErrorException("commands.scoreboard.teams.add.displayTooLong", teamName, 32);
+                    throw new SyntaxErrorException("commands.teams.add.displayTooLong", teamName, 32);
                 }
                 else if (!(teamName.length() > 0))
                 {
-                    throw new SyntaxErrorException("commands.scoreboard.teams.add.displayTooShort");
+                    throw new SyntaxErrorException("commands.teams.add.displayTooShort");
                 }
                 else {
                     Team team = new Team(teamId, teamName);
@@ -128,7 +129,7 @@ public class TeamCommand extends CommandBase{
                 teamHandler.addTeam(team);
             }
 
-            func_152373_a(iCommandSender, this, "commands.scoreboard.teams.add.success", teamName);
+            func_152373_a(iCommandSender, this, "commands.teams.add.success", teamName);
         }
     }
 
@@ -139,7 +140,7 @@ public class TeamCommand extends CommandBase{
 
         if (team != null) {
             teamHandler.removeTeam(team);
-            func_152373_a(iCommandSender, this, "commands.scoreboard.teams.remove.success", team.getTeamName());
+            func_152373_a(iCommandSender, this, "commands.teams.remove.success", team.getTeamName());
         }
     }
 
@@ -188,12 +189,12 @@ public class TeamCommand extends CommandBase{
         if (!addedPlayers.isEmpty())
         {
 
-            func_152373_a(iCommandSender, this, "commands.scoreboard.teams.join.success", addedPlayers.size(), teamId, joinNiceString(addedPlayers.toArray()));
+            func_152373_a(iCommandSender, this, "commands.teams.join.success", addedPlayers.size(), teamId, joinNiceString(addedPlayers.toArray()));
         }
 
         if (!errorPlayers.isEmpty())
         {
-            throw new CommandException("commands.scoreboard.teams.join.failure", errorPlayers.size(), teamId, joinNiceString(errorPlayers.toArray()));
+            throw new CommandException("commands.teams.join.failure", errorPlayers.size(), teamId, joinNiceString(errorPlayers.toArray()));
         }
     }
 
@@ -241,12 +242,12 @@ public class TeamCommand extends CommandBase{
         if (!removedPlayers.isEmpty())
         {
 
-            func_152373_a(iCommandSender, this, "commands.scoreboard.teams.leave.success", removedPlayers.size(), joinNiceString(removedPlayers.toArray()));
+            func_152373_a(iCommandSender, this, "commands.teams.leave.success", removedPlayers.size(), joinNiceString(removedPlayers.toArray()));
         }
 
         if (!errorPlayers.isEmpty())
         {
-            throw new CommandException("commands.scoreboard.teams.leave.failure", errorPlayers.size(), joinNiceString(errorPlayers.toArray()));
+            throw new CommandException("commands.teams.leave.failure", errorPlayers.size(), joinNiceString(errorPlayers.toArray()));
         }
     }
 
@@ -270,10 +271,10 @@ public class TeamCommand extends CommandBase{
 
             if (players.size() <= 0)
             {
-                throw new CommandException("commands.scoreboard.teams.list.player.empty", team.getTeamName());
+                throw new CommandException("commands.teams.list.player.empty", team.getTeamName());
             }
 
-            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.scoreboard.teams.list.player.count", players.size(), team.getTeamName());
+            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.teams.list.player.count", players.size(), team.getTeamName());
             chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.DARK_GREEN);
             iCommandSender.addChatMessage(chatcomponenttranslation);
             iCommandSender.addChatMessage(new ChatComponentText(joinNiceString(players.toArray())));
@@ -285,18 +286,44 @@ public class TeamCommand extends CommandBase{
             if (teams.size() <= 0)
             {
                 iCommandSender.addChatMessage(new ChatComponentTranslation("No Teams"));
-                throw new CommandException("commands.scoreboard.teams.list.empty", 0);
+                throw new CommandException("commands.teams.list.empty", 0);
             }
 
-            ChatComponentTranslation chatComponentTranslation = new ChatComponentTranslation("commands.scoreboard.teams.list.count", teams.size());
+            ChatComponentTranslation chatComponentTranslation = new ChatComponentTranslation("commands.teams.list.count", teams.size());
             chatComponentTranslation.getChatStyle().setColor(EnumChatFormatting.DARK_GREEN);
             iCommandSender.addChatMessage(chatComponentTranslation);
 
             for (Team team : teams) {
-                iCommandSender.addChatMessage(new ChatComponentTranslation("commands.scoreboard.teams.list.entry", team.getTeamName(), team.getPlayers().size()));
+                iCommandSender.addChatMessage(new ChatComponentTranslation("commands.teams.list.entry", team.getTeamId(), team.getTeamName(), team.getPlayers().size()));
             }
         }
     }
 
+    public List addTabCompletionOptions(ICommandSender iCommandSender, String[] args) {
+        TeamHandler teamHandler = TeamHandler.instance;
 
+        if (args.length == 1) {
+            return getListOfStringsMatchingLastWord(args, "add", "remove", "join", "leave", "list");
+        }
+        else {
+            if (args[0].equalsIgnoreCase("remove")) {
+                return getListOfStringsFromIterableMatchingLastWord(args, teamHandler.getTeamNames());
+            }
+            else if (args[0].equalsIgnoreCase("join")) {
+                if (args.length == 2) {
+                    return getListOfStringsFromIterableMatchingLastWord(args, teamHandler.getTeamNames());
+                }
+                if (args.length >= 3) {
+                    return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+                }
+            }
+            else if (args[0].equalsIgnoreCase("leave")) {
+                return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+            }
+            else if (args[0].equalsIgnoreCase("list")) {
+                return getListOfStringsFromIterableMatchingLastWord(args, teamHandler.getTeamNames());
+            }
+        }
+        return null;
+    }
 }
